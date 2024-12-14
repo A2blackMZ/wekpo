@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,6 +20,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'lastname',          // Ajout du champ 'lastname'
+        'is_confirmed',      // Ajout du champ 'is_confirmed'
+        'confirmation_code', // Ajout du champ 'confirmation_code'
     ];
 
     /**
@@ -31,6 +33,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'confirmation_code', // Masquer le code de confirmation pour la sérialisation
     ];
 
     /**
@@ -40,5 +43,18 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_confirmed' => 'boolean', // Cast pour indiquer que 'is_confirmed' est un booléen
     ];
+
+    /**
+     * Mutator for setting the password attribute.
+     * Automatically hashes the password before saving it.
+     *
+     * @param string $password
+     * @return void
+     */
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+    }
 }
